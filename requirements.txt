@@ -1,0 +1,3 @@
+# Combined Python requirements for ReliefAI services
+-r ai-engine/requirements.txt
+-r ai-centre/requirements.txt

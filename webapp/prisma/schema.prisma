@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RequestStatus {
+  PENDING
+  VERIFIED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CANCELLED
+}
+
+enum RequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum VolunteerAvailability {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum VolunteerStatus {
+  IDLE
+  ASSIGNED
+  ON_MISSION
+  OFFLINE
+}
+
+model EmergencyRequest {
+  id                  String          @id @default(cuid())
+  requestCode         String          @unique @map("request_code")
+  emergencyType       String          @map("emergency_type")
+  description         String
+  location            String
+  latitude            Float?
+  longitude           Float?
+  peopleAffected      Int             @default(1) @map("people_affected")
+  priority            RequestPriority
+  status              RequestStatus   @default(PENDING)
+  requesterPhone      String?         @map("requester_phone")
+  assignedVolunteerId String?         @map("assigned_volunteer_id")
+  etaMinutes          Int?            @map("eta_minutes")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  assignedVolunteer Volunteer?           @relation(fields: [assignedVolunteerId], references: [id])
+  statusHistory     StatusHistoryEntry[]
+
+  @@map("emergency_requests")
+}
+
+model Volunteer {
+  id               String                @id @default(cuid())
+  name             String
+  skills           String[]
+  location         String
+  latitude         Float?
+  longitude        Float?
+  availability     VolunteerAvailability @default(AVAILABLE)
+  status           VolunteerStatus       @default(IDLE)
+  currentRequestId String?               @unique @map("current_request_id")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @updatedAt @map("updated_at")
+
+  assignedRequests EmergencyRequest[]
+
+  @@map("volunteers")
+}
+
+model Prediction {
+  id                      String   @id @default(cuid())
+  disasterType            String   @map("disaster_type")
+  location                String
+  probability             Int
+  severity                String
+  predictedTime           DateTime @map("predicted_time")
+  affectedArea            String?  @map("affected_area")
+  estimatedPeopleAffected Int?     @map("estimated_people_affected")
+  confidence              Int
+  modelVersion            String   @map("model_version")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  @@map("predictions")
+}
+
+model StatusHistoryEntry {
+  id        String        @id @default(cuid())
+  requestId String        @map("request_id")
+  status    RequestStatus
+  note      String?
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  request EmergencyRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@map("status_history")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  message   String
+  type      String   @default("system")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("activity_log")
+}

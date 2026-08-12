@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: reliefai
+      POSTGRES_PASSWORD: reliefai
+      POSTGRES_DB: reliefai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reliefai -d reliefai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  webapp:
+    build: ./webapp
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://reliefai:reliefai@postgres:5432/reliefai
+      AI_ENGINE_URL: http://ai-engine:8000
+      AI_CENTRE_URL: http://ai-centre:7860
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-engine:
+        condition: service_started
+      ai-centre:
+        condition: service_started
+
+  ai-engine:
+    build: ./ai-engine
+    ports:
+      - "8000:8000"
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PORT: 8000
+    volumes:
+      - ./ai-engine/data:/app/data
+
+  ai-centre:
+    build: ./ai-centre
+    ports:
+      - "7860:7860"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      OLLAMA_HOST: http://host.docker.internal:11434
+
+volumes:
+  postgres_data:

@@ -1,0 +1,23 @@
+{
+  "name": "reliefai-final",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ReliefAI — unified disaster response platform",
+  "scripts": {
+    "dev": "concurrently -n web,engine,centre -c blue,green,yellow \"npm run dev:web\" \"npm run dev:engine\" \"npm run dev:centre\"",
+    "dev:web": "cd webapp && PORT=3000 npm run dev",
+    "dev:engine": "cd ai-engine && ../.venv/bin/python api_server.py",
+    "dev:centre": "cd ai-centre && ../.venv/bin/uvicorn ai_api:app --host 0.0.0.0 --port 7860 --reload",
+    "install:all": "npm run install:web && npm run install:python",
+    "install:web": "cd webapp && npm install",
+    "install:python": ".venv/bin/pip install -r ai-engine/requirements.txt -r ai-centre/requirements.txt",
+    "setup": "bash scripts/setup.sh",
+    "start": "bash scripts/start-all.sh",
+    "stop": "bash scripts/stop-all.sh",
+    "build": "cd webapp && npm run build",
+    "health": "curl -s http://localhost:3000/api/health | python -m json.tool"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

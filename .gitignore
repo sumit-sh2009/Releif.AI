@@ -1,0 +1,52 @@
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+webapp/.env
+webapp/.env.local
+ai-engine/.env
+ai-centre/.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+webapp/node_modules/
+webapp/.next/
+webapp/out/
+npm-debug.log*
+yarn-error.log*
+
+# Prisma / runtime data
+webapp/prisma/*.db
+webapp/prisma/*.db-journal
+
+# AI runtime artifacts
+ai-engine/data/user_memory.json
+ai-engine/data/*.faiss
+ai-engine/data/*.pkl
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+.cursor/
+
+# Logs & temp
+*.log
+logs/
+tmp/
+.next/
+*.pid
+
+# Docker volumes (local)
+postgres_data/
