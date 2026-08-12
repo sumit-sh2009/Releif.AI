@@ -67,22 +67,30 @@ Citizens and responders use different interfaces — on purpose. People in crisi
 
 ```mermaid
 flowchart LR
-    subgraph Citizen["🆘 Citizen (no login)"]
-        A[Landing] --> B[Get Help wizard]
-        B --> C[Tracking page]
-        C --> D["Code: RF-7K29X4P1"]
+    subgraph CITIZEN["Citizen portal — no login"]
+        direction TB
+        c1[Landing]
+        c2[Get Help wizard]
+        c3[Tracking page]
+        c1 --> c2 --> c3
     end
 
-    subgraph Ops["🛰️ Operations console"]
-        E[Dashboard] --> F[Live map]
-        E --> G[Emergency queue]
-        E --> H[Volunteers]
-        E --> I[AI prediction]
+    db[(PostgreSQL)]
+
+    subgraph OPS["Operations console"]
+        direction TB
+        o1[Dashboard]
+        o2[Live map]
+        o3[Emergency queue]
+        o4[Volunteers]
+        o5[AI prediction]
+        o1 --> o2 & o3 & o4 & o5
     end
 
-    B -->|creates request| G
-    G -->|updates status| C
-    H -->|assigns volunteer| C
+    c2 -->|creates request| db
+    db -->|status sync| c3
+    o3 -->|manage requests| db
+    o4 -->|assign volunteer| db
 ```
 
 ---
@@ -93,23 +101,22 @@ Three services, one monorepo. The webapp is the hub — everything else plugs in
 
 ```mermaid
 flowchart TB
-    subgraph Web["webapp · Next.js 16 · :3000"]
-        UI[Landing · Get Help · Tracking]
-        OPS[Dashboard · Map · Admin]
-        API[REST API routes]
+    subgraph WEB["webapp — Next.js 16"]
+        direction TB
+        pub[Public UI]
+        ops[Ops UI]
+        api[REST API]
+        pub --> api
+        ops --> api
     end
 
-    DB[(PostgreSQL :5432)]
-    ENG[ai-engine · LangGraph + FAISS · :8000]
-    CTR[ai-centre · Groq LLM · :7860]
+    db[(PostgreSQL)]
+    engine[ai-engine]
+    centre[ai-centre]
 
-    UI --> API
-    OPS --> API
-    API --> DB
-    API -->|/api/predictions/run| ENG
-    API -->|/api/first-aid| CTR
-    API -->|/api/health| ENG
-    API -->|/api/health| CTR
+    api --> db
+    api --> engine
+    api --> centre
 ```
 
 <details>
