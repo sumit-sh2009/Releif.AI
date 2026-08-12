@@ -12,11 +12,11 @@
 
 | Area | What it does |
 |------|----------------|
-| **Citizen portal** | Report emergencies (`/get-help`), track requests (`/tracking?code=…`) — no ops login required |
-| **Operations console** | Dashboard, live map, emergency queue, volunteer management, AI prediction |
-| **AI prediction** | LangGraph flood/disaster risk analysis with RAG (port 8000) |
-| **AI first aid** | Ollama-powered emergency guidance (port 7860) |
-| **PostgreSQL** | Persistent emergency requests, volunteers, predictions, activity feed |
+| **Citizen portal** | Report emergencies (`/get-help`) and track request updates (`/tracking?code=…`) without needing an ops login |
+| **Operations console** | Real-time map, incident queues, volunteer assignment, and risk monitoring |
+| **AI prediction engine** | LangGraph flood and disaster risk analysis with FAISS RAG (port 8000) |
+| **AI disaster assistant** | Groq-powered high-speed disaster guidance and first-aid response (`llama-3.3-70b-versatile`, port 7860) |
+| **PostgreSQL database** | Persistent storage for emergencies, volunteers, predictions, and activity logs |
 
 ---
 
@@ -37,9 +37,9 @@
          ▼                              ▼
 ┌─────────────────────┐    ┌─────────────────────────┐
 │  ai-engine/         │    │  ai-centre/             │
-│  LangGraph + FAISS    │    │  Ollama llama3.2        │
-│  Groq / Open-Meteo    │    │  Disaster chat + risk   │
-│  Flood prediction     │    │  First-aid guidance     │
+│  LangGraph + FAISS    │    │  FastAPI + Groq API     │
+│  Groq / Open-Meteo    │    │  Llama 3.3 70B          │
+│  Flood prediction     │    │  Disaster chat assistant│
 └─────────────────────┘    └─────────────────────────┘
 ```
 
@@ -52,8 +52,8 @@
 - **Node.js** 20+
 - **Python** 3.11+
 - **PostgreSQL** 16 (local or Docker)
-- **Ollama** (optional, for AI Centre) — `ollama pull llama3.2`
-- **Groq API key** (optional, for AI Engine LLM features)
+- **Groq API Key** (`GROQ_API_KEY`) for AI prediction and chat assistant
+- **Ollama** (optional local fallback if Groq key isn't provided)
 
 ### 1. Clone & setup
 
@@ -141,14 +141,13 @@ reliefai/
 
 | Variable | Service | Default | Description |
 |----------|---------|---------|-------------|
-| `DATABASE_URL` | webapp | `postgresql://reliefai:reliefai@localhost:5432/reliefai` | PostgreSQL connection |
-| `AI_ENGINE_URL` | webapp | `http://localhost:8000` | LangGraph prediction engine |
-| `AI_CENTRE_URL` | webapp | `http://localhost:7860` | Ollama disaster AI |
-| `GROQ_API_KEY` | ai-engine | — | Groq LLM key (falls back to mock if missing) |
-| `GOOGLE_API_KEY` | ai-engine | — | Optional embeddings fallback |
-| `OLLAMA_HOST` | ai-centre | `http://localhost:11434` | Ollama server URL |
+| `DATABASE_URL` | webapp | `postgresql://reliefai:reliefai@localhost:5432/reliefai` | PostgreSQL connection string |
+| `AI_ENGINE_URL` | webapp | `http://localhost:8000` | LangGraph prediction engine endpoint |
+| `AI_CENTRE_URL` | webapp | `http://localhost:7860` | Groq disaster chat service |
+| `GROQ_API_KEY` | ai-engine, ai-centre | — | Groq API key for LLM queries |
+| `GOOGLE_API_KEY` | ai-engine | — | Optional Google embeddings fallback |
 
-If AI services are unavailable, the webapp **gracefully falls back** to mock providers.
+If AI services are offline or keys are missing, the webapp automatically falls back to deterministic/mock providers so the system never breaks.
 
 ---
 
@@ -225,8 +224,8 @@ Ensure `DATABASE_URL`, `AI_ENGINE_URL`, and `AI_CENTRE_URL` are set in the deplo
 
 - **Frontend:** Next.js 16, React 19, Tailwind CSS 4, Motion, Leaflet
 - **Backend:** Next.js API routes, Prisma ORM, PostgreSQL 16
-- **AI Engine:** Python, FastAPI, LangGraph, FAISS, Groq
-- **AI Centre:** Python, FastAPI, Ollama (llama3.2)
+- **AI Engine:** Python, FastAPI, LangGraph, FAISS, Groq (`llama-3.3-70b-versatile`)
+- **AI Centre:** Python, FastAPI, Groq (`llama-3.3-70b-versatile`) with local Ollama fallback
 
 ---
 
