@@ -71,28 +71,28 @@
   /* Custom text sizes as utilities using Tailwind v4 syntax */
   --text-headline-md: 24px;
   --text-headline-md--line-height: 1.3;
-  --text-headline-md--letter-spacing: -0.02em;
-  --text-headline-md--font-weight: 600;
+  --text-headline-md--letter-spacing: 0.01em;
+  --text-headline-md--font-weight: 700;
 
   --text-body-md: 16px;
-  --text-body-md--line-height: 1.5;
-  --text-body-md--letter-spacing: -0.01em;
-  --text-body-md--font-weight: 400;
+  --text-body-md--line-height: 1.65;
+  --text-body-md--letter-spacing: 0.02em;
+  --text-body-md--font-weight: 500;
 
   --text-display-lg: 48px;
-  --text-display-lg--line-height: 1.1;
-  --text-display-lg--letter-spacing: -0.03em;
-  --text-display-lg--font-weight: 700;
+  --text-display-lg--line-height: 1.14;
+  --text-display-lg--letter-spacing: 0.012em;
+  --text-display-lg--font-weight: 800;
 
   --text-display-lg-mobile: 32px;
-  --text-display-lg-mobile--line-height: 1.2;
-  --text-display-lg-mobile--letter-spacing: -0.02em;
-  --text-display-lg-mobile--font-weight: 700;
+  --text-display-lg-mobile--line-height: 1.18;
+  --text-display-lg-mobile--letter-spacing: 0.01em;
+  --text-display-lg-mobile--font-weight: 800;
 
   --text-body-sm: 14px;
-  --text-body-sm--line-height: 1.4;
-  --text-body-sm--letter-spacing: 0;
-  --text-body-sm--font-weight: 400;
+  --text-body-sm--line-height: 1.55;
+  --text-body-sm--letter-spacing: 0.024em;
+  --text-body-sm--font-weight: 500;
 
   --text-data-mono: 13px;
   --text-data-mono--line-height: 1.2;
@@ -195,103 +195,103 @@
 [data-theme='dark'] .modal { background: #1e1e1e; }
 [data-theme='dark'] .toast { background: #e5e5e5; color: #171515; }
 
-/* ── Ops Dark Theme (matches landing page) ─────────────────── */
+/* ── Ops console — theme-aware via CSS tokens ─────────────────── */
 .app-shell.ops-shell {
-  background: #0a0a0a;
-  color: #e5e5e5;
+  background: var(--ops-bg);
+  color: var(--ops-text);
   font-family: var(--font-ui);
+  transition: background var(--duration-base) var(--ease-premium), color var(--duration-base) var(--ease-premium);
 }
-.ops-shell .main-content { background: #0a0a0a; }
-.ops-shell .page-wrap { background: #0a0a0a; padding: 24px 32px; }
+.ops-shell .main-content { background: var(--ops-bg); }
+.ops-shell .page-wrap { background: var(--ops-bg); padding: 24px 32px; }
 
 .ops-sidebar {
-  background: #111 !important;
-  border-right: 1px solid rgba(255,255,255,0.08) !important;
+  background: var(--ops-bg-elevated);
+  border-right: 1px solid var(--ops-border);
 }
-.ops-sidebar .brand strong { color: #fff; font-family: var(--font-ui); }
-.ops-sidebar .brand span { color: #666; }
-.ops-sidebar .brand-mark { background: #dc2626 !important; }
+.ops-sidebar .brand strong { color: var(--ops-text); font-family: var(--font-ui); }
+.ops-sidebar .brand span { color: var(--ops-text-subtle); }
+.ops-sidebar .brand-mark { background: var(--ops-accent) !important; }
 .ops-sidebar-cta {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   margin: 0 14px 16px; padding: 12px;
-  background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3);
-  border-radius: 12px; color: #f87171; font-size: 13px; font-weight: 600;
+  background: var(--ops-accent-dim); border: 1px solid rgba(220,38,38,0.3);
+  border-radius: 12px; color: var(--ops-accent); font-size: 13px; font-weight: 600;
   text-decoration: none; transition: all 0.2s;
 }
-.ops-sidebar-cta:hover { background: rgba(220,38,38,0.25); color: #fca5a5; }
-.ops-nav-item { color: #888 !important; }
-.ops-nav-item:hover { background: rgba(255,255,255,0.05) !important; color: #fff !important; }
-.ops-nav-item.active { background: rgba(220,38,38,0.15) !important; color: #f87171 !important; }
-.ops-operator { border-top: 1px solid rgba(255,255,255,0.08) !important; }
+.ops-sidebar-cta:hover { background: rgba(220,38,38,0.25); }
+.ops-nav-item { color: var(--ops-text-muted) !important; }
+.ops-nav-item:hover { background: var(--ops-nav-hover) !important; color: var(--ops-text) !important; }
+.ops-nav-item.active { background: var(--ops-accent-dim) !important; color: var(--ops-accent) !important; }
+.ops-operator { border-top: 1px solid var(--ops-border) !important; }
 .ops-role-switch {
-  background: rgba(255,255,255,0.05) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  color: #888 !important;
+  background: var(--ops-input-bg) !important;
+  border: 1px solid var(--ops-input-border) !important;
+  color: var(--ops-text-muted) !important;
 }
 
 .ops-topbar {
-  background: rgba(10,10,10,0.95) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  background: var(--ops-topbar-bg) !important;
+  border-bottom: 1px solid var(--ops-border) !important;
   backdrop-filter: blur(12px);
 }
 .ops-search {
-  background: rgba(255,255,255,0.05) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  color: #888;
+  background: var(--ops-input-bg) !important;
+  border: 1px solid var(--ops-input-border) !important;
+  color: var(--ops-text-muted);
 }
-.ops-search input { color: #fff !important; }
-.ops-search input::placeholder { color: #555; }
+.ops-search input { color: var(--ops-input-text) !important; }
+.ops-search input::placeholder { color: var(--ops-input-placeholder); }
 .ops-help-btn {
   align-items: center; padding: 6px 14px; border-radius: 99px;
-  background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3);
-  color: #f87171; font-size: 11px; font-weight: 700; text-decoration: none;
+  background: var(--ops-accent-dim); border: 1px solid rgba(220,38,38,0.3);
+  color: var(--ops-accent); font-size: 11px; font-weight: 700; text-decoration: none;
   transition: all 0.2s;
 }
 .ops-help-btn:hover { background: rgba(220,38,38,0.25); }
 
 .ops-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--ops-surface);
+  border: 1px solid var(--ops-border);
   border-radius: 16px;
 }
 .ops-input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--ops-input-bg);
+  border: 1px solid var(--ops-input-border);
   border-radius: 12px;
   padding: 12px 16px;
-  color: #fff;
+  color: var(--ops-input-text);
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
 }
 .ops-input:focus { border-color: rgba(220,38,38,0.4); }
-.ops-input::placeholder { color: #555; }
+.ops-input::placeholder { color: var(--ops-input-placeholder); }
 
-.ops-table thead tr { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.ops-table thead tr { border-bottom: 1px solid var(--ops-border); }
 .ops-table th {
   text-align: left; padding: 12px 16px;
   font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #666; font-weight: 700;
+  color: var(--ops-text-subtle); font-weight: 700;
 }
-.ops-table td { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.05); }
-.ops-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.ops-table td { padding: 14px 16px; border-top: 1px solid var(--ops-border); }
+.ops-table tbody tr:hover { background: var(--ops-row-hover); }
 
 .ops-btn-ghost {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 6px 10px; border-radius: 8px;
-  background: transparent; border: 1px solid rgba(255,255,255,0.1);
-  color: #888; cursor: pointer; transition: all 0.2s; text-decoration: none;
+  background: transparent; border: 1px solid var(--ops-border);
+  color: var(--ops-text-muted); cursor: pointer; transition: all 0.2s; text-decoration: none;
 }
-.ops-btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+.ops-btn-ghost:hover { color: var(--ops-text); border-color: var(--border-strong); }
 .ops-btn-primary {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 6px 12px; border-radius: 8px;
-  background: rgba(220,38,38,0.2); border: 1px solid rgba(220,38,38,0.3);
-  color: #f87171; cursor: pointer; transition: all 0.2s;
+  background: var(--ops-accent-dim); border: 1px solid rgba(220,38,38,0.3);
+  color: var(--ops-accent); cursor: pointer; transition: all 0.2s;
 }
-.ops-btn-primary:hover { background: rgba(220,38,38,0.3); }
+.ops-btn-primary:hover { background: rgba(220,38,38,0.25); }
 
-/* Override light dashboard cards in dark ops shell */
 .ops-shell .overview-card,
 .ops-shell .stat-card,
 .ops-shell .card,
@@ -306,35 +306,37 @@
 .ops-shell .factors,
 .ops-shell .recommendations,
 .ops-shell .history-card {
-  background: rgba(255,255,255,0.03) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  color: #e5e5e5;
+  background: var(--ops-surface);
+  border-color: var(--ops-border);
+  color: var(--ops-text);
 }
 .ops-shell .page-heading h1,
 .ops-shell .overview-card h2,
 .ops-shell .stat-card > strong,
-.ops-shell .card-heading h3 { color: #fff !important; }
+.ops-shell .card-heading h3 { color: var(--ops-text) !important; }
 .ops-shell .page-heading p,
 .ops-shell .overview-card p,
 .ops-shell .stat-card small,
-.ops-shell .eyebrow { color: #666 !important; }
-.ops-shell .location { color: #888 !important; }
+.ops-shell .eyebrow { color: var(--ops-text-muted) !important; }
+.ops-shell .location { color: var(--ops-text-muted) !important; }
 .ops-shell .primary-button { background: #dc2626 !important; color: #fff !important; }
-.ops-shell .notification-pop { background: #1a1a1a !important; border-color: rgba(255,255,255,0.1) !important; }
-.ops-shell .notification-item { border-color: rgba(255,255,255,0.05) !important; }
-.ops-shell .notification-item strong { color: #fff; }
-.ops-shell .notification-item span { color: #666; }
-.ops-shell table td { color: #888; border-color: rgba(255,255,255,0.05) !important; }
-.ops-shell table th { color: #555 !important; }
-.ops-shell table td strong { color: #fff !important; }
-.ops-shell .triage-row { border-color: rgba(255,255,255,0.05) !important; }
-.ops-shell .triage-row:hover { background: rgba(255,255,255,0.03) !important; }
-.ops-shell .activity-row { border-color: rgba(255,255,255,0.05) !important; }
-.ops-shell tbody tr:hover { background: rgba(255,255,255,0.04) !important; }
-.ops-shell tbody tr:hover td { color: #a3a3a3 !important; }
-.ops-shell tbody tr:hover td strong { color: #fff !important; }
-.ops-shell .progress-track { background: rgba(255,255,255,0.08) !important; }
-.ops-shell .alert-panel { background: rgba(220,38,38,0.08) !important; border-left-color: #dc2626 !important; }
-.ops-shell .risk-card { background: rgba(220,38,38,0.08) !important; border-color: rgba(220,38,38,0.2) !important; }
-.ops-shell .forecast-card { background: #1a0808 !important; }
-
+.ops-shell .notification-pop {
+  background: var(--ops-bg-elevated) !important;
+  border-color: var(--ops-border) !important;
+}
+.ops-shell .notification-item { border-color: var(--ops-border) !important; }
+.ops-shell .notification-item strong { color: var(--ops-text); }
+.ops-shell .notification-item span { color: var(--ops-text-muted); }
+.ops-shell table td { color: var(--ops-text-muted); border-color: var(--ops-border) !important; }
+.ops-shell table th { color: var(--ops-text-subtle) !important; }
+.ops-shell table td strong { color: var(--ops-text) !important; }
+.ops-shell .triage-row { border-color: var(--ops-border) !important; }
+.ops-shell .triage-row:hover { background: var(--ops-row-hover) !important; }
+.ops-shell .activity-row { border-color: var(--ops-border) !important; }
+.ops-shell tbody tr:hover { background: var(--ops-row-hover) !important; }
+.ops-shell tbody tr:hover td { color: var(--ops-text-muted) !important; }
+.ops-shell tbody tr:hover td strong { color: var(--ops-text) !important; }
+.ops-shell .progress-track { background: var(--ops-border) !important; }
+.ops-shell .alert-panel { background: var(--ops-accent-dim) !important; border-left-color: #dc2626 !important; }
+.ops-shell .risk-card { background: var(--ops-accent-dim) !important; border-color: rgba(220,38,38,0.2) !important; }
+.ops-shell .forecast-card { background: var(--ops-accent-dim) !important; }

@@ -2,6 +2,14 @@
 import * as React from "react";
 import { Sparkles, Loader2, BrainCircuit, AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/app/PageHeader";
+import { OpsGlassCard } from "@/components/app/OpsGlassCard";
+
+const PIPELINE_STEPS = [
+  "Ingesting environmental signals",
+  "Running LangGraph orchestration",
+  "Querying FAISS knowledge base",
+  "Generating risk assessment",
+] as const;
 
 interface AIResult {
   risk_level: string;
@@ -18,6 +26,19 @@ export default function PredictionPage() {
   const [result, setResult] = React.useState<AIResult | null>(null);
   const [error, setError] = React.useState("");
   const [location, setLocation] = React.useState("Riverside District, Assam, India");
+  const [pipelineStep, setPipelineStep] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!loading) {
+      setPipelineStep(0);
+      return;
+    }
+    setPipelineStep(0);
+    const timers = PIPELINE_STEPS.map((_, i) =>
+      setTimeout(() => setPipelineStep(i), i * 900),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [loading]);
 
   async function runAI() {
     setLoading(true);
@@ -113,15 +134,22 @@ export default function PredictionPage() {
       )}
 
       {loading && !result && (
-        <div className="ops-card pipeline-loading">
+        <OpsGlassCard className="pipeline-loading" glow="red">
           <BrainCircuit size={40} className="text-red-400 animate-pulse" />
           <p>Running LangGraph flood analysis pipeline...</p>
           <div className="flex flex-col gap-2 w-full max-w-sm mt-2">
-            <div className="pipeline-node active">Ingesting environmental signals</div>
-            <div className="pipeline-node">Running LangGraph orchestration</div>
-            <div className="pipeline-node">Generating risk assessment</div>
+            {PIPELINE_STEPS.map((step, i) => (
+              <div
+                key={step}
+                className={`pipeline-node ${
+                  i < pipelineStep ? "done" : i === pipelineStep ? "active" : ""
+                }`}
+              >
+                {step}
+              </div>
+            ))}
           </div>
-        </div>
+        </OpsGlassCard>
       )}
 
       {result && (
@@ -177,10 +205,16 @@ export default function PredictionPage() {
           </div>
 
           <aside className="space-y-4">
-            <div className="ops-card p-6 bg-gradient-to-br from-red-950/40 to-black border-red-500/20">
+            <OpsGlassCard className="p-6 bg-gradient-to-br from-red-950/40 to-black border-red-500/20" glow="red">
               <div className="report-section-title text-red-400/70 mb-2">AI Engine</div>
               <div className="type-heading-xl font-medium text-white mb-2">
                 {Math.round((result.confidence_score ?? 0.85) * 100)}%
+              </div>
+              <div className="confidence-track mb-2">
+                <div
+                  className="confidence-fill"
+                  style={{ width: `${Math.round((result.confidence_score ?? 0.85) * 100)}%` }}
+                />
               </div>
               <div className="text-xs text-neutral-500">Confidence score</div>
               <div className="mt-4 pt-4 border-t border-white/10 space-y-2 text-xs text-neutral-500">
@@ -188,7 +222,7 @@ export default function PredictionPage() {
                 <div className="flex justify-between"><span>Port</span><span className="text-neutral-300">:8000</span></div>
                 <div className="flex justify-between"><span>RAG</span><span className="text-emerald-400">Active</span></div>
               </div>
-            </div>
+            </OpsGlassCard>
             <div className="ops-card p-4 text-xs text-neutral-600 leading-relaxed">
               <CheckCircle2 size={14} className="text-emerald-400 inline mr-1" />
               This page calls <code className="text-neutral-400">POST /api/predictions/run</code> which connects to the AI Engine LangGraph pipeline.

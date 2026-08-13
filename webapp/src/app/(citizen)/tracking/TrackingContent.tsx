@@ -80,10 +80,10 @@ export default function TrackingContent() {
   }, [initialCode, fetchRequest]);
 
   React.useEffect(() => {
-    if (!code || !request) return;
+    if (!code) return;
     const interval = setInterval(() => fetchRequest(code), 10000);
     return () => clearInterval(interval);
-  }, [code, request, fetchRequest]);
+  }, [code, fetchRequest]);
 
   const currentStepIndex = request ? TIMELINE_STEPS.findIndex((s) => s.key === request.status) : -1;
   const urgency = request ? priorityToUrgency(request.priority) : "normal";

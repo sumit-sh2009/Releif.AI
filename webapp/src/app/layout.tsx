@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { RoleProvider } from "@/components/app/RoleContext";
 
-const inter = Inter({
-  variable: "--font-inter",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -33,19 +26,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      data-theme="dark"
+      className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background type-body text-on-surface selection:bg-primary/20 selection:text-primary">
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <RoleProvider>
-            {children}
-          </RoleProvider>
-        </ThemeProvider>
+        <RoleProvider>
+          {children}
+        </RoleProvider>
       </body>
     </html>
   );

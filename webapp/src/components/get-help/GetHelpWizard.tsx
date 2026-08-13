@@ -88,7 +88,7 @@ const URGENCIES: {
     id: "standard",
     label: "Standard",
     description: "Important — can wait for assignment",
-    color: "border-white/20 bg-white/5 text-neutral-300",
+    color: "border-[var(--border-default)] bg-[var(--citizen-surface)] text-[var(--text-secondary)]",
   },
 ];
 
@@ -190,7 +190,7 @@ export default function GetHelpWizard() {
                     ? "bg-red-500 text-white"
                     : i === step
                       ? "bg-red-500/20 border border-red-400/50 text-red-400"
-                      : "bg-white/5 border border-white/10 text-[var(--text-disabled)]"
+                      : "wizard-step-idle"
                 }`}
               >
                 {i < step ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
@@ -205,7 +205,7 @@ export default function GetHelpWizard() {
             </div>
           ))}
         </div>
-        <div className="h-px bg-white/10 relative">
+        <div className="h-px wizard-progress-track relative">
           <motion.div
             className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-500 to-red-400"
             initial={{ width: "0%" }}
@@ -227,7 +227,7 @@ export default function GetHelpWizard() {
           >
             <div className="text-center mb-8">
               <p className="type-overline text-red-400/90 mb-3">Step 1 · Emergency type</p>
-              <h2 className="type-heading-l text-white mb-2">What do you need?</h2>
+              <h2 className="type-heading-l wizard-heading mb-2">What do you need?</h2>
               <p className="type-body text-[var(--text-secondary)]">
                 Select the type of help and how urgent it is.
               </p>
@@ -239,19 +239,17 @@ export default function GetHelpWizard() {
                   key={id}
                   type="button"
                   onClick={() => setEmergencyType(id)}
-                  className={`group relative p-4 rounded-2xl border text-left transition-all duration-300 ${
-                    emergencyType === id
-                      ? "border-red-400/50 bg-red-500/10 shadow-[0_0_30px_rgba(220,38,38,0.15)]"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                  className={`group relative p-4 rounded-2xl text-left transition-all duration-300 min-h-[48px] wizard-choice ${
+                    emergencyType === id ? "is-selected" : ""
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 mb-3 transition-colors ${
-                      emergencyType === id ? "text-red-400" : "text-neutral-500 group-hover:text-neutral-300"
+                    className={`w-5 h-5 mb-3 transition-colors wizard-choice-icon ${
+                      emergencyType === id ? "" : ""
                     }`}
                   />
                   <div className="font-medium text-sm">{label}</div>
-                  <div className="text-neutral-600 text-xs mt-1 leading-snug hidden sm:block">
+                  <div className="wizard-choice-desc text-xs mt-1 leading-snug hidden sm:block">
                     {description}
                   </div>
                 </button>
@@ -259,7 +257,7 @@ export default function GetHelpWizard() {
             </div>
 
             <div className="mb-8">
-              <div className="text-neutral-500 text-xs font-semibold tracking-[0.2em] uppercase mb-4">
+              <div className="wizard-section-label mb-4">
                 Urgency Level
               </div>
               <div className="flex flex-col gap-3">
@@ -268,10 +266,8 @@ export default function GetHelpWizard() {
                     key={id}
                     type="button"
                     onClick={() => setUrgency(id)}
-                    className={`flex items-center gap-4 p-4 rounded-xl border text-left transition-all duration-300 ${
-                      urgency === id
-                        ? `${color} shadow-lg`
-                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                    className={`flex items-center gap-4 p-4 rounded-xl text-left transition-all duration-300 min-h-[48px] wizard-choice ${
+                      urgency === id ? `is-selected ${color}` : ""
                     }`}
                   >
                     <div
@@ -285,7 +281,7 @@ export default function GetHelpWizard() {
                     />
                     <div>
                       <div className="font-medium text-sm">{label}</div>
-                      <div className="text-neutral-500 text-xs mt-0.5">{description}</div>
+                      <div className="wizard-choice-desc text-xs mt-0.5">{description}</div>
                     </div>
                   </button>
                 ))}
@@ -296,7 +292,7 @@ export default function GetHelpWizard() {
               type="button"
               disabled={!canProceedStep0}
               onClick={() => setStep(1)}
-              className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-br from-red-500/20 to-red-900/20 backdrop-blur-xl border border-red-400/30 text-white px-8 py-4 rounded-full type-body font-medium shadow-[0_8px_32px_rgba(220,38,38,0.2)] wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-full citizen-btn-primary wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Continue
               <ArrowRight className="w-5 h-5" />
@@ -314,7 +310,7 @@ export default function GetHelpWizard() {
             transition={STEP_MOTION}
           >
             <div className="text-center mb-10">
-              <h2 className="type-heading-l text-white mb-3">
+              <h2 className="type-heading-l wizard-heading mb-3">
                 Where are you?
               </h2>
               <p className="type-body text-[var(--text-secondary)]">
@@ -336,7 +332,7 @@ export default function GetHelpWizard() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Address, landmark, or area name"
-                    className="w-full wizard-field bg-white/[0.03] border border-white/10 text-white placeholder:text-neutral-600"
+                    className="w-full wizard-field citizen-input"
                   />
                 </div>
                 <button
@@ -359,8 +355,8 @@ export default function GetHelpWizard() {
                   People Affected
                 </label>
                 <div className="flex items-center gap-5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
-                    <Users className="w-4 h-4 text-neutral-500" />
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl wizard-icon-chip">
+                    <Users className="w-4 h-4" />
                   </span>
                   <input
                     type="range"
@@ -385,7 +381,7 @@ export default function GetHelpWizard() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell us what's happening — the more detail, the better we can help..."
                   rows={4}
-                  className="w-full px-4 py-3 wizard-field bg-white/[0.03] border border-white/10 text-white placeholder:text-neutral-600 resize-none"
+                  className="w-full px-4 py-3 wizard-field citizen-input resize-none"
                 />
                 <p className="citizen-helper">
                   Minimum 10 characters · {description.length}/500
@@ -397,7 +393,7 @@ export default function GetHelpWizard() {
               <button
                 type="button"
                 onClick={() => setStep(0)}
-                className="px-6 py-4 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/20 transition-all"
+                className="wizard-back-btn px-6 py-4 transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -405,7 +401,7 @@ export default function GetHelpWizard() {
                 type="button"
                 disabled={!canProceedStep1}
                 onClick={() => setStep(2)}
-                className="flex-1 inline-flex items-center justify-center gap-3 bg-gradient-to-br from-red-500/20 to-red-900/20 backdrop-blur-xl border border-red-400/30 text-white px-8 py-4 rounded-full type-body font-medium shadow-[0_8px_32px_rgba(220,38,38,0.2)] wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex-1 citizen-btn-primary wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -424,7 +420,7 @@ export default function GetHelpWizard() {
             transition={STEP_MOTION}
           >
             <div className="text-center mb-10">
-              <h2 className="type-heading-l text-white mb-3">
+              <h2 className="type-heading-l wizard-heading mb-3">
                 Verify your number
               </h2>
               <p className="type-body text-[var(--text-secondary)]">
@@ -432,32 +428,32 @@ export default function GetHelpWizard() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] mb-6">
-              <div className="flex items-center gap-3 type-overline text-neutral-500 mb-4">
+            <div className="p-6 rounded-2xl wizard-summary mb-6">
+              <div className="flex items-center gap-3 type-overline wizard-summary-label mb-4">
                 <Shield className="w-4 h-4" />
                 Request Summary
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <div className="text-neutral-600 text-xs mb-1">Type</div>
+                  <div className="wizard-summary-label text-xs mb-1">Type</div>
                   <div className="font-medium">{emergencyType}</div>
                 </div>
                 <div>
-                  <div className="text-neutral-600 text-xs mb-1">Urgency</div>
+                  <div className="wizard-summary-label text-xs mb-1">Urgency</div>
                   <div
                     className={`font-medium capitalize ${
                       urgency === "critical"
                         ? "text-red-400"
                         : urgency === "urgent"
                           ? "text-amber-400"
-                          : "text-neutral-300"
+                          : "text-[var(--text-secondary)]"
                     }`}
                   >
                     {urgency}
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <div className="text-neutral-600 text-xs mb-1">Location</div>
+                  <div className="wizard-summary-label text-xs mb-1">Location</div>
                   <div className="font-medium">{location}</div>
                 </div>
               </div>
@@ -478,7 +474,7 @@ export default function GetHelpWizard() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 15))}
                       placeholder="+91 98765 43210"
-                      className="w-full wizard-field bg-white/[0.03] border border-white/10 text-white placeholder:text-neutral-600"
+                      className="w-full wizard-field citizen-input"
                     />
                   </div>
                   {!otpSent && (
@@ -486,7 +482,7 @@ export default function GetHelpWizard() {
                       type="button"
                       onClick={sendOtp}
                       disabled={phone.length < 10}
-                      className="shrink-0 px-5 py-4 rounded-xl border border-white/10 type-body-sm font-medium tracking-wide hover:border-red-400/40 hover:text-red-400 transition-all disabled:opacity-30"
+                      className="shrink-0 px-5 py-4 rounded-xl wizard-back-btn type-body-sm font-medium tracking-wide hover:border-red-400/40 hover:text-red-500 transition-all disabled:opacity-30 min-h-[48px]"
                     >
                       Send OTP
                     </button>
@@ -508,9 +504,9 @@ export default function GetHelpWizard() {
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="• • • • • •"
                     maxLength={6}
-                    className="w-full px-4 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white text-center text-2xl tracking-[0.5em] font-mono placeholder:text-neutral-700 focus:outline-none focus:border-red-400/40 focus:ring-1 focus:ring-red-400/20 transition-all"
+                    className="w-full px-4 py-4 wizard-field citizen-input text-center text-2xl tracking-[0.5em] type-mono"
                   />
-                  <p className="text-neutral-600 text-xs mt-2 text-center">
+                  <p className="citizen-helper text-center">
                     Demo mode — enter any 6 digits to verify
                   </p>
                 </motion.div>
@@ -521,7 +517,7 @@ export default function GetHelpWizard() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-6 py-4 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/20 transition-all"
+                className="wizard-back-btn px-6 py-4 transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -529,7 +525,7 @@ export default function GetHelpWizard() {
                 type="button"
                 disabled={!canProceedStep2 || submitting}
                 onClick={submitRequest}
-                className="flex-1 inline-flex items-center justify-center gap-4 bg-gradient-to-br from-red-500/20 to-red-900/20 backdrop-blur-xl border border-red-400/30 text-white px-8 py-4 rounded-full type-body font-medium shadow-[0_8px_32px_rgba(220,38,38,0.2)] wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex-1 citizen-btn-primary wizard-primary-btn disabled:opacity-30 disabled:cursor-not-allowed gap-4"
               >
                 {submitting ? (
                   <>
@@ -568,18 +564,18 @@ export default function GetHelpWizard() {
             <div className="text-red-400 type-overline mb-4">
               Request received
             </div>
-            <h2 className="type-display text-white mb-3">
+            <h2 className="type-display wizard-heading mb-3">
               Help is on the way.
             </h2>
             <p className="type-body-lg text-[var(--text-secondary)] mb-10 prose-width-narrow mx-auto">
               Your request has been logged. Save your ID to track status and receive updates.
             </p>
 
-            <div className="inline-flex flex-col items-center border border-white/10 px-12 py-8 bg-white/[0.02] rounded-2xl mb-10">
+            <div className="inline-flex flex-col items-center wizard-code-box px-12 py-8 rounded-2xl mb-10">
               <p className="type-overline text-[var(--text-muted)] mb-2">
                 Your Request ID
               </p>
-              <p className="type-mono text-3xl md:text-4xl text-white">
+              <p className="type-mono text-3xl md:text-4xl wizard-code-value">
                 {requestCode}
               </p>
             </div>
@@ -589,18 +585,18 @@ export default function GetHelpWizard() {
               {["Created", "Verified", "Matched", "En Route"].map((s, i) => (
                 <div key={s} className="flex flex-col items-center gap-2 relative">
                   {i > 0 && (
-                    <div className="absolute right-1/2 top-1.5 w-full h-px bg-white/10 -translate-y-1/2 -z-10" style={{ width: "calc(100% + 1rem)", left: "-50%" }} />
+                    <div className="absolute right-1/2 top-1.5 w-full h-px wizard-timeline-line -translate-y-1/2 -z-10" style={{ width: "calc(100% + 1rem)", left: "-50%" }} />
                   )}
                   <div
                     className={`w-3 h-3 rounded-full border-2 ${
                       i === 0
                         ? "bg-red-500 border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
-                        : "bg-black border-white/20"
+                        : "wizard-timeline-dot-idle border-2"
                     }`}
                   />
                   <span
                     className={`type-overline ${
-                      i === 0 ? "text-white" : "text-neutral-600"
+                      i === 0 ? "wizard-timeline-label-active" : "wizard-timeline-label-idle"
                     }`}
                   >
                     {s}

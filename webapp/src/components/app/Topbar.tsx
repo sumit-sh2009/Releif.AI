@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
-import { Menu, Command, Bell, SlidersHorizontal, Siren, Waves, Truck, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/components/ThemeProvider";
+import { Menu, Command, Bell, SlidersHorizontal, Siren, Waves, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AIStatusBar } from "./AIStatusBar";
 
@@ -17,7 +16,6 @@ function Notification({text,time,icon}:{text:string;time:string;icon:React.React
 export function Topbar({ setMobileNav }: { setMobileNav: (v: boolean) => void }) {
   const [search, setSearch] = React.useState('');
   const [showNotifications, setShowNotifications] = React.useState(false);
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
 
   function runSearch(e?: React.FormEvent) {
@@ -43,13 +41,6 @@ export function Topbar({ setMobileNav }: { setMobileNav: (v: boolean) => void })
         </form>
         <div className="top-actions">
           <AIStatusBar />
-          <button 
-            className="icon-button" 
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
           <button 
             className="icon-button" 
             onClick={() => setShowNotifications(!showNotifications)} 

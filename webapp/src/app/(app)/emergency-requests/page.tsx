@@ -7,6 +7,8 @@ import {
 import Link from "next/link";
 import { useRole } from "@/components/app/RoleContext";
 import { PageHeader } from "@/components/app/PageHeader";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/ui/Toast";
 import type { EmergencyRequest } from "@/types/emergency-request";
 import { priorityToUrgency, statusToDisplay, timeAgo } from "@/lib/format";
 
@@ -33,7 +35,7 @@ export default function EmergencyRequestsPage() {
   const { role } = useRole();
   const [filter, setFilter] = React.useState("all");
   const [search, setSearch] = React.useState("");
-  const [toast, setToast] = React.useState("");
+  const { toast, showToast, dismiss } = useToast();
   const [requests, setRequests] = React.useState<EmergencyRequest[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -59,7 +61,7 @@ export default function EmergencyRequestsPage() {
       body: JSON.stringify({ status: "VERIFIED" }),
     });
     if (res.ok) {
-      setToast(`Verified ${code}`);
+      showToast(`Verified ${code}`);
       loadRequests();
     }
   };
@@ -72,7 +74,7 @@ export default function EmergencyRequestsPage() {
       v.availability === "AVAILABLE" && v.status === "IDLE"
     );
     if (!pending.length || !available) {
-      setToast("No pending requests or available volunteers");
+      showToast("No pending requests or available volunteers");
       return;
     }
     const res = await fetch(`/api/volunteers/${available.id}/assign`, {
@@ -81,7 +83,7 @@ export default function EmergencyRequestsPage() {
       body: JSON.stringify({ requestId: pending[0].id }),
     });
     if (res.ok) {
-      setToast(`Dispatched ${available.name} to ${pending[0].requestCode}`);
+      showToast(`Dispatched ${available.name} to ${pending[0].requestCode}`);
       loadRequests();
     }
   };
@@ -218,7 +220,7 @@ export default function EmergencyRequestsPage() {
                       <td>
                         <div className="flex items-center gap-2">
                           <HeartPulse size={14} className={urgency === "critical" ? "text-red-400" : "text-amber-400"} />
-                          <span className="capitalize text-sm font-medium">{urgency}</span>
+                          <span className={`capitalize text-sm font-medium ${urgency === "critical" ? "severity-pulse inline-flex px-2 py-0.5 rounded-full" : ""}`}>{urgency}</span>
                         </div>
                       </td>
                       <td><StatusBadge value={displayStatus} /></td>
@@ -258,12 +260,7 @@ export default function EmergencyRequestsPage() {
         )}
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white text-black px-5 py-3 rounded-full text-sm font-medium shadow-xl">
-          <CheckCircle2 size={16} className="text-emerald-500" />
-          {toast}
-        </div>
-      )}
+      <Toast message={toast} onDismiss={dismiss} />
     </div>
   );
 }

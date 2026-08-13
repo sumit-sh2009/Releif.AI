@@ -1,7 +1,9 @@
 "use client";
 import * as React from "react";
-import { Search, Filter, ShieldCheck, MapPin, Users, HeartPulse, ChevronDown, Loader2 } from "lucide-react";
+import { Search, Filter, ShieldCheck, MapPin, Users, ChevronDown, Loader2 } from "lucide-react";
 import { useRole } from "@/components/app/RoleContext";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/ui/Toast";
 import type { Volunteer } from "@/types/volunteer";
 import type { EmergencyRequest } from "@/types/emergency-request";
 
@@ -13,10 +15,11 @@ function StatusBadge({ value }: { value: string }) {
 export default function VolunteersPage() {
   const { role } = useRole();
   const [filter, setFilter] = React.useState("all");
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [volunteers, setVolunteers] = React.useState<Volunteer[]>([]);
   const [requests, setRequests] = React.useState<EmergencyRequest[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [toast, setToast] = React.useState("");
+  const { toast, showToast, dismiss } = useToast();
 
   const load = React.useCallback(async () => {
     try {
@@ -38,7 +41,7 @@ export default function VolunteersPage() {
   const dispatch = async (volunteerId: string) => {
     const pending = requests.find((r) => r.status === "VERIFIED" || r.status === "PENDING");
     if (!pending) {
-      setToast("No pending requests to assign");
+      showToast("No pending requests to assign");
       return;
     }
     const res = await fetch(`/api/volunteers/${volunteerId}/assign`, {
@@ -47,12 +50,19 @@ export default function VolunteersPage() {
       body: JSON.stringify({ requestId: pending.id }),
     });
     if (res.ok) {
-      setToast("Volunteer dispatched");
+      showToast("Volunteer dispatched");
       load();
     }
   };
 
   const filtered = volunteers.filter((v) => {
+    const q = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      v.name.toLowerCase().includes(q) ||
+      v.location.toLowerCase().includes(q) ||
+      v.skills.some((s) => s.toLowerCase().includes(q));
+    if (!matchesSearch) return false;
     if (filter === "available") return v.availability === "AVAILABLE" && v.status === "IDLE";
     if (filter === "on_mission") return v.status === "ON_MISSION" || v.status === "ASSIGNED";
     return true;
@@ -71,7 +81,11 @@ export default function VolunteersPage() {
       <div className="table-controls">
         <div className="search-box">
           <Search size={16} />
-          <input placeholder="Search name or skills..." />
+          <input
+            placeholder="Search name or skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         <div className="filter-group">
           <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>All</button>
@@ -128,11 +142,7 @@ export default function VolunteersPage() {
         )}
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white text-black px-5 py-3 rounded-full text-sm font-medium shadow-xl">
-          {toast}
-        </div>
-      )}
+      <Toast message={toast} onDismiss={dismiss} />
     </div>
   );
 }

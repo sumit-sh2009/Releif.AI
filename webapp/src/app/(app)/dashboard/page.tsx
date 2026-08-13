@@ -2,6 +2,7 @@
 import * as React from "react";
 import { ChevronRight, MapPin, Waves, Droplets, Siren, AlertTriangle, Users, ShieldCheck, Layers3, HeartPulse, Activity, Navigation, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { OpsGlassCard } from "@/components/app/OpsGlassCard";
 import type { EmergencyRequest } from "@/types/emergency-request";
 import type { Volunteer } from "@/types/volunteer";
 import type { PredictionResult } from "@/types/prediction";
@@ -10,12 +11,12 @@ import { priorityToUrgency, statusToDisplay, timeAgo } from "@/lib/format";
 function StatusBadge({ value }: { value: string }) {
   return <span className={`status-badge ${value}`}>{value.replace(/_/g, " ")}</span>;
 }
-function Stat({ label, value, detail, icon, alert }: { label: string; value: string | number; detail: string; icon: React.ReactNode; alert?: boolean }) {
+function Stat({ label, value, detail, icon, alert, index }: { label: string; value: string | number; detail: string; icon: React.ReactNode; alert?: boolean; index: number }) {
   return (
-    <div className={`stat-card ${alert ? "stat-alert" : ""}`}>
+    <OpsGlassCard glow={alert ? "red" : "none"} delay={index * 0.06} className={`stat-card ${alert ? "stat-alert" : ""}`}>
       <div className="stat-top"><span>{label}</span><div className="stat-icon">{icon}</div></div>
       <strong>{value}</strong><small>{detail}</small>
-    </div>
+    </OpsGlassCard>
   );
 }
 function RiskCard({ prediction }: { prediction: PredictionResult }) {
@@ -130,10 +131,10 @@ export default function DashboardHome() {
       </section>
 
       <div className="stats-grid">
-        <Stat label="ACTIVE EMERGENCIES" value={counts.active} detail="Live from database" icon={<Siren size={17} />} alert />
-        <Stat label="CRITICAL" value={counts.critical} detail="Requires command attention" icon={<AlertTriangle size={17} />} alert />
-        <Stat label="PEOPLE AFFECTED" value={counts.people.toLocaleString()} detail="Across active sectors" icon={<Users size={17} />} />
-        <Stat label="AVAILABLE VOLUNTEERS" value={counts.volunteers} detail="Ready for dispatch" icon={<ShieldCheck size={17} />} />
+        <Stat index={0} label="ACTIVE EMERGENCIES" value={counts.active} detail="Live from database" icon={<Siren size={17} />} alert />
+        <Stat index={1} label="CRITICAL" value={counts.critical} detail="Requires command attention" icon={<AlertTriangle size={17} />} alert />
+        <Stat index={2} label="PEOPLE AFFECTED" value={counts.people.toLocaleString()} detail="Across active sectors" icon={<Users size={17} />} />
+        <Stat index={3} label="AVAILABLE VOLUNTEERS" value={counts.volunteers} detail="Ready for dispatch" icon={<ShieldCheck size={17} />} />
       </div>
 
       <section className="dashboard-grid">

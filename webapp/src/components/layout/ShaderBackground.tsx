@@ -23,6 +23,11 @@ export function ShaderBackground({ className }: ShaderBackgroundProps) {
 
     let visible = true;
     let animationFrameId = 0;
+    let gl: WebGLRenderingContext | null = null;
+    let vShader: WebGLShader | null = null;
+    let fShader: WebGLShader | null = null;
+    let prog: WebGLProgram | null = null;
+    let buf: WebGLBuffer | null = null;
 
     function syncSize() {
       if (!canvas) return;
@@ -42,7 +47,7 @@ export function ShaderBackground({ className }: ShaderBackgroundProps) {
     resizeObserver?.observe(canvas);
     syncSize();
 
-    const gl =
+    gl =
       canvas.getContext("webgl", { antialias: false, powerPreference: "low-power" }) ||
       (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
     if (!gl) return;
@@ -84,20 +89,30 @@ void main() {
       if (!s) return null;
       gl!.shaderSource(s, src);
       gl!.compileShader(s);
+      if (!gl!.getShaderParameter(s, gl!.COMPILE_STATUS)) {
+        gl!.deleteShader(s);
+        return null;
+      }
       return s;
     }
 
-    const prog = gl.createProgram();
+    prog = gl.createProgram();
     if (!prog) return;
 
-    const vShader = createShader(gl.VERTEX_SHADER, vs);
-    const fShader = createShader(gl.FRAGMENT_SHADER, fs);
-    if (vShader) gl.attachShader(prog, vShader);
-    if (fShader) gl.attachShader(prog, fShader);
+    vShader = createShader(gl.VERTEX_SHADER, vs);
+    fShader = createShader(gl.FRAGMENT_SHADER, fs);
+    if (!vShader || !fShader) return;
+
+    gl.attachShader(prog, vShader);
+    gl.attachShader(prog, fShader);
     gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+
     gl.useProgram(prog);
 
-    const buf = gl.createBuffer();
+    buf = gl.createBuffer();
+    if (!buf) return;
+
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -124,7 +139,7 @@ void main() {
     visibilityObserver.observe(canvas);
 
     function render(t: number) {
-      if (!gl || !canvas) return;
+      if (!gl || !canvas || !prog) return;
       if (!visible || document.hidden) {
         animationFrameId = 0;
         return;
@@ -144,13 +159,39 @@ void main() {
         animationFrameId = requestAnimationFrame(render);
       }
     };
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+    };
+
+    const onContextRestored = () => {
+      if (visible && !animationFrameId) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
     document.addEventListener("visibilitychange", onVisibility);
+    canvas.addEventListener("webglcontextlost", onContextLost);
+    canvas.addEventListener("webglcontextrestored", onContextRestored);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       visibilityObserver.disconnect();
       resizeObserver?.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored);
+
+      if (gl) {
+        if (buf) gl.deleteBuffer(buf);
+        if (vShader) gl.deleteShader(vShader);
+        if (fShader) gl.deleteShader(fShader);
+        if (prog) gl.deleteProgram(prog);
+        const ext = gl.getExtension("WEBGL_lose_context");
+        ext?.loseContext();
+      }
     };
   }, []);
 

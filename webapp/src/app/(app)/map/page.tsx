@@ -28,7 +28,7 @@ export default function MapPage() {
           </span>
         </div>
       </div>
-      <div className="flex-1 relative mx-6 sm:mx-8 mb-6 rounded-2xl overflow-hidden border border-white/10">
+      <div className="flex-1 relative mx-6 sm:mx-8 mb-6 rounded-2xl overflow-hidden border border-[var(--ops-border)] bg-[var(--ops-surface)]">
         <LiveMap />
       </div>
     </div>

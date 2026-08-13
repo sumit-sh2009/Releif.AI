@@ -46,7 +46,7 @@ export default function Hero() {
           <h1 className="type-display-xl text-white">
             When disaster strikes,
           </h1>
-          <h1 className="type-display-xl italic text-white/90 md:ml-[8%] mt-3 md:mt-4">
+          <h1 className="type-display-xl text-white/90 md:ml-[8%] mt-3 md:mt-4 font-semibold">
             every second matters.
           </h1>
         </div>
