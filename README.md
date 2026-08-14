@@ -357,7 +357,7 @@ Still stuck? Open an issue — we'd rather fix the docs than leave you guessing.
 | **Frontend** | Next.js 16, React 19, Tailwind CSS 4, Motion, Leaflet |
 | **Backend** | Next.js API routes, Prisma ORM, PostgreSQL 16 |
 | **AI Engine** | Python, FastAPI, LangGraph, FAISS, Groq |
-| **AI Centre** | Python, FastAPI, Groq (`llama-3.3-70b-versatile`) |
+| **AI Centre** | Python, FastAPI, Groq (`openai/gpt-oss-120b`) |
 
 ---
 

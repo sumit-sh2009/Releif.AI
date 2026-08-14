@@ -40,7 +40,7 @@ If there is nothing useful, return: {{"facts": []}}
             
         client = Groq(api_key=api_key)
         res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
             temperature=0.0

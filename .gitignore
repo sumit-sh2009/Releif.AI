@@ -50,3 +50,6 @@ tmp/
 
 # Docker volumes (local)
 postgres_data/
+
+# Archives
+*.zip

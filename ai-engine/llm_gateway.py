@@ -19,7 +19,7 @@ load_dotenv()
 
 
 OLLAMA_MODEL = "llama3.2"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 OLLAMA_TIMEOUT = 15  # seconds — if Ollama takes longer, failover
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
